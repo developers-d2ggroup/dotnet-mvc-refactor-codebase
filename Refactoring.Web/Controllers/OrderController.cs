@@ -24,11 +24,12 @@ namespace Refactoring.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SubmitOrder(OrderFormModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                // If the model is not valid, return the view with validation errors
-                return RedirectToAction("Index", "Home");
-            }
+    if (!ModelState.IsValid)
+    {
+        // Add validation errors to ModelState
+        ModelState.AddModelError(string.Empty, "There are validation errors. Please correct them.");
+        return RedirectToAction("Index", "Home", model);
+    }
 
             var order = new Order();
             order.District = model.SelectedDistrict;
@@ -38,7 +39,7 @@ namespace Refactoring.Web.Controllers
             await _orderService.ProcessOrder(order);
             var completedOrder = _orderService.GetOrder();
 
-            return View("OrderSubmitted", completedOrder); // Redirect to a success page
+            return View("SubmitOrder", completedOrder); // Redirect to a success page
         }
     }
 }

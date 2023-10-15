@@ -4,6 +4,8 @@
     ViewData["Title"] = "Order Form";
 }
 
+<h3>@ViewData["ErrorMessage"]</h3>
+
 @using (Html.BeginForm("SubmitOrder", "Order", FormMethod.Post, new { enctype = "multipart/form-data" })) {
     @Html.ValidationSummary(true)
     <h1>Order Form</h1>
