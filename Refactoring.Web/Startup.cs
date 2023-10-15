@@ -23,6 +23,13 @@ namespace Refactoring.Web
             services.AddControllersWithViews();
             services.AddTransient<Order>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<OrderService>(provider =>
+            {
+                var orderService = new OrderService();
+                orderService.DealService = provider.GetRequiredService<IDealService>();
+                return orderService;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

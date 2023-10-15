@@ -7,6 +7,7 @@ namespace Refactoring.Web.Services
     public class OrderService : IOrderService
     {
         private Order _order;
+        public IDealService DealService;
 
         public async Task ProcessOrder(Order order)
         {
@@ -29,9 +30,8 @@ namespace Refactoring.Web.Services
             } else if (_order.District.ToLower() == "middleton") {
                 var advert = new Advert();
                 advert.CreatedOn = DateTime.Now;
-                var svc = new DealService();
-                var deal = svc.GenerateDeal(DateTime.Now);
-                var biz = svc.GetRandomLocalBusiness();
+                var deal = DealService.GenerateDeal(DateTime.Now);
+                var biz = DealService.GetRandomLocalBusiness();
                 advert.Heading = "Middleton " + biz;
                 advert.Content = "Get " + deal * 100 + "Percent off your next purchase!";
                 var result = await ChamberOfCommerceApi.GetFor("Middleton");
