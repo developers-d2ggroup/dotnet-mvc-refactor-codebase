@@ -24,12 +24,12 @@ namespace Refactoring.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SubmitOrder(OrderFormModel model)
         {
-    if (!ModelState.IsValid)
-    {
-        // Add validation errors to ModelState
-        ModelState.AddModelError(string.Empty, "There are validation errors. Please correct them.");
-        return RedirectToAction("Index", "Home", model);
-    }
+            if (!ModelState.IsValid)
+            {
+                // Add validation errors to ModelState
+                ModelState.AddModelError(string.Empty, "There are validation errors. Please correct them.");
+                return RedirectToAction("Index", "Home", model);
+            }
 
             var order = new Order();
             order.District = model.SelectedDistrict;
