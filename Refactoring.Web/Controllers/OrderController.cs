@@ -1,23 +1,45 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Refactoring.Web.DomainModels;
 using Refactoring.Web.Services;
+using System.Threading.Tasks;
+using Refactoring.Web.DomainModels;
+using Refactoring.Web.Models;
 
-namespace Refactoring.Web.Controllers {
-    public class OrderController : Controller {
-        public IActionResult Index() {
-            return View();
+
+namespace Refactoring.Web.Controllers
+{
+    public class OrderController : Controller
+    {
+        private readonly IOrderService _orderService;
+
+        public OrderController(IOrderService orderService)
+        {
+            _orderService = orderService;
         }
-        
+
+        public IActionResult Index()
+        {
+            return View(new OrderFormModel()); // Initialize an empty OrderFormModel
+        }
+
         [HttpPost]
-        public async Task<IActionResult> SubmitOrder(string selectedDistrict, decimal orderAmount) {
+        public async Task<IActionResult> SubmitOrder(OrderFormModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Add validation errors to ModelState
+                ModelState.AddModelError(string.Empty, "There are validation errors. Please correct them.");
+                return RedirectToAction("Index", "Home", model);
+            }
+
             var order = new Order();
-            order.District = selectedDistrict;
-            order.Total = orderAmount;
-            var orderService = new OrderService(order);
-            await orderService.ProcessOrder();
-            var completedOrder = orderService.GetOrder();
-            return View(completedOrder);
+            order.District = model.SelectedDistrict;
+            order.Total = model.OrderAmount;
+
+            // Use the injected OrderService to process the order
+            await _orderService.ProcessOrder(order);
+            var completedOrder = _orderService.GetOrder();
+
+            return View("SubmitOrder", completedOrder); // Redirect to a success page
         }
     }
 }

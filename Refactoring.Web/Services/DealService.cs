@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Refactoring.Web.Services {
-    public class DealService {
+    public class DealService: IDealService {
         public DealService() { }
         
         public decimal GenerateDeal(DateTime dateTime) {

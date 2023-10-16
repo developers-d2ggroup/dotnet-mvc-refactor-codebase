@@ -2,18 +2,19 @@ using System;
 using System.Threading.Tasks;
 using Refactoring.Web.DomainModels;
 
-namespace Refactoring.Web.Services {
-    public class OrderService{
-        private readonly Order _order;
+namespace Refactoring.Web.Services
+{
+    public class OrderService : IOrderService
+    {
+        private Order _order;
+        public IDealService DealService;
 
-        public OrderService(Order order) {
+        public async Task ProcessOrder(Order order)
+        {
             _order = order;
             _order.Id = Guid.NewGuid().ToString();
             _order.CreatedOn = DateTime.Now;
             _order.UpdatedOn = DateTime.Now;
-        }
-
-        public async Task ProcessOrder() {
             if (_order.District.ToLower() == "cambridge") {
                 var advert = new Advert();
                 advert.CreatedOn = DateTime.Now;
@@ -29,9 +30,8 @@ namespace Refactoring.Web.Services {
             } else if (_order.District.ToLower() == "middleton") {
                 var advert = new Advert();
                 advert.CreatedOn = DateTime.Now;
-                var svc = new DealService();
-                var deal = svc.GenerateDeal(DateTime.Now);
-                var biz = svc.GetRandomLocalBusiness();
+                var deal = DealService.GenerateDeal(DateTime.Now);
+                var biz = DealService.GetRandomLocalBusiness();
                 advert.Heading = "Middleton " + biz;
                 advert.Content = "Get " + deal * 100 + "Percent off your next purchase!";
                 var result = await ChamberOfCommerceApi.GetFor("Middleton");

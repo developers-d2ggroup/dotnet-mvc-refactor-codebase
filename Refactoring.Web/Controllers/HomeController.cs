@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Refactoring.Web.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Refactoring.Web.Controllers {
     public class HomeController : Controller {
@@ -14,11 +15,20 @@ namespace Refactoring.Web.Controllers {
             _logger = logger;
         }
 
-        public IActionResult Index() {
+        public IActionResult Index(OrderFormModel model) {
             _logger.LogDebug("Index loaded");
             var districts = new List<string> {
                 "Cambridge", "Downtown", "County", "Middleton"
             };
+
+            // Retrieve error messages and input data from TempData
+            if (TempData.ContainsKey("ErrorMessage"))
+            {
+                ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
+                ViewBag.SelectedDistrict = TempData["SelectedDistrict"] as string;
+                ViewBag.OrderAmount = TempData["OrderAmount"] as decimal?;
+                ModelState.Merge(TempData["ModelState"] as ModelStateDictionary);
+            }
             var viewModel = new OrderFormModel {
                 Districts = districts.Select(d => new SelectListItem {
                     Value = d.ToLower(), 
